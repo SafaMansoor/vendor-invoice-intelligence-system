@@ -1,4 +1,4 @@
-# Invoice Intelligence System
+# Vendor Invoice Intelligence System
 
 A Streamlit application for **freight cost estimation** and **invoice risk review**. It combines pre-trained scikit-learn models with an interactive interface so users can explore invoice inputs and identify records that may need human review.
 
@@ -6,99 +6,117 @@ A Streamlit application for **freight cost estimation** and **invoice risk revie
 
 ## Features
 
-- **Freight cost prediction:** estimates freight from an invoice amount.
-- **Invoice risk analysis:** returns a risk probability and a low/high risk classification.
-- **Interactive inputs:** accepts invoice and purchase summary values without requiring a database at app runtime.
+- **Freight Cost Estimation:** Predicts estimated freight costs using a trained machine learning model.
+- **Invoice Risk Review:** Identifies potentially high-risk invoices for further review.
+- **Interactive Dashboard:** Provides a user-friendly Streamlit interface for entering invoice details and viewing predictions.
+- **Pre-trained Models:** Uses saved machine learning models without requiring retraining every time the application runs.
+- **Data-driven Insights:** Helps users understand invoice patterns and potential cost anomalies.
 
-## Risk model inputs
+## Tech Stack
 
-The risk classifier expects these seven inputs, in this order:
+- **Programming Language:** Python
+- **Frontend / UI:** Streamlit
+- **Machine Learning:** Scikit-learn
+- **Data Processing:** Pandas, NumPy
+- **Model Storage:** Pickle / Joblib
 
-1. `invoice_quantity`
-2. `invoice_dollars`
-3. `Freight`
-4. `days_to_pay`
-5. `total_brands`
-6. `total_item_quantity`
-7. `total_item_dollars`
+## Project Workflow
 
-The app applies the saved `StandardScaler` before passing the values to the classifier. Keep the model and scaler files together in `models/`; they must be trained with the same feature names and order.
+1. Users enter or upload invoice-related information through the Streamlit interface.
+2. The application processes the input data.
+3. The freight cost estimation model predicts the expected freight cost.
+4. The invoice risk model evaluates the provided invoice information.
+5. Results are displayed through the interactive dashboard for review.
 
-## How risk labels are created
+## Installation and Setup
 
-The training workflow uses an Isolation Forest to flag a portion of the dataset as anomalous (the default contamination is 10%). Welch's t-tests are then used to identify features that differ between flagged and unflagged records. A supervised classifier is trained to reproduce those generated labels.
-
-These are **anomaly-derived labels**, not independently verified fraud findings or confirmed audit outcomes. Evaluation scores therefore describe agreement with the generated labels, not real-world fraud-detection performance.
-
-## Project layout
-
-```text
-.
-├── app.py
-├── requirements.txt
-├── models/
-│   ├── invoice_risk_model.pkl
-│   ├── predict_freight_model.pkl
-│   └── risk_scaler.pkl
-├── notebook/
-│   ├── 01_eda_invoice_risk.ipynb
-│   ├── 02_data_preprocessing_invoice_risk.ipynb
-│   ├── 03_model_training_invoice_risk.ipynb
-│   ├── Eda_freight_cost.ipynb
-│   ├── data_preprocessing_freightcost.ipynb
-│   ├── model_training_freight_cost.ipynb
-│   └── processed_invoices.csv
-└── src/
-    ├── data_preprocessing_freight_cost.py
-    └── data_preprocessing_invoice_risk.py
-```
-
-The pre-trained model files are required to run the application. The local SQLite database (`data/inventory.db`) is not required for predictions and is not included in the repository.
-
-## Run locally
-
-### Requirements
-
-- Python 3.10 or later
-- pip
-
-### Windows (PowerShell)
-
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-streamlit run app.py
-```
-
-### macOS / Linux
+### 1. Clone the Repository
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
+git clone <repository-url>
+cd vendor-invoice-intelligence-system
+```
+
+### 2. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+Activate the environment:
+
+**Windows:**
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux:**
+```bash
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+
+```bash
 streamlit run app.py
 ```
 
-Streamlit prints a local URL (usually `http://localhost:8501`) when the application is ready.
+The application will open in your browser.
 
-## Training and notebooks
+## Project Structure
 
-The notebooks in `notebook/` document exploratory analysis, preprocessing, and model experiments. Re-running the workflows may require the original SQLite dataset and the paths or settings used in the notebooks. The database is intentionally excluded from this repository; provide an authorized local copy before attempting to reproduce training.
+```text
+vendor-invoice-intelligence-system/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+│
+├── models/
+│   ├── freight_cost_model.pkl
+│   └── invoice_risk_model.pkl
+│
+├── data/
+│
+└── notebooks/
+```
 
-The Python preprocessing modules are in `src/`. The Streamlit app loads the existing model artifacts from `models/` and does not train models at startup.
+*Note: Update the project structure above to match the actual folders and filenames in the repository.*
 
-## Data and responsible use
+## Screenshots
 
-- Do not publish the source database, confidential invoice records, or identifying business data.
-- Review `notebook/processed_invoices.csv` before sharing the repository. Remove it or replace it with an authorized, anonymized sample if it contains sensitive information.
-- Treat model outputs as prompts for human review, not as final decisions.
-- Validate model performance on representative, independently reviewed data before using it for operational decisions.
+Add screenshots of the application here to demonstrate:
 
-## Dependencies
+- Main dashboard
+- Freight cost prediction
+- Invoice risk assessment
+- Prediction results
 
-Dependencies are listed in [`requirements.txt`](requirements.txt). The project uses Streamlit, pandas, NumPy, SciPy, scikit-learn, Joblib, Matplotlib, and Seaborn.
+## Project Objectives
 
-## Maintainer
+- Apply machine learning to practical invoice and freight cost analysis.
+- Estimate freight expenses using historical data patterns.
+- Identify invoices that may require additional review.
+- Build an interactive application that makes machine learning predictions accessible to users.
 
-**Safa Mansoor** · [GitHub](https://github.com/SafaMansoor)
+## Future Improvements
+
+- Add bulk invoice upload and analysis.
+- Improve model performance with additional training data.
+- Add detailed visual analytics and reporting.
+- Integrate database storage for invoice records.
+- Deploy the application for wider accessibility.
+
+## Disclaimer
+
+The predictions generated by this application are intended for informational and decision-support purposes only. A high-risk prediction does not establish fraud, non-compliance, or wrongdoing. All flagged records should be reviewed by a qualified human before any decision is made.
+
+## Project Contributors
+- **Safa Mansoor** — [GitHub](https://github.com/SafaMansoor)
+- **Shruti Goswami** — [GitHub](https://github.com/ShrutiGoswami14)
