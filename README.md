@@ -12,23 +12,21 @@ A Streamlit application for **freight cost estimation** and **invoice risk revie
 
 ## Risk model inputs
 
-The risk classifier expects these seven inputs, in this order:
+The risk classifier expects these five inputs, in this order:
 
 1. `invoice_quantity`
 2. `invoice_dollars`
 3. `Freight`
-4. `days_to_pay`
-5. `total_brands`
-6. `total_item_quantity`
-7. `total_item_dollars`
+4. `total_item_quantity`
+5. `total_item_dollars`
 
 The app applies the saved `StandardScaler` before passing the values to the classifier. Keep the model and scaler files together in `models/`; they must be trained with the same feature names and order.
 
 ## How risk labels are created
 
-The training workflow uses an Isolation Forest to flag a portion of the dataset as anomalous (the default contamination is 10%). Welch's t-tests are then used to identify features that differ between flagged and unflagged records. A supervised classifier is trained to reproduce those generated labels.
+The training workflow flags an invoice when its invoice and item dollar totals differ by more than $5 or its average receiving delay exceeds 10 days. Welch's t-tests are used to examine features that differ between flagged and unflagged records, and a supervised classifier is trained using five selected invoice and purchase-order features.
 
-These are **anomaly-derived labels**, not independently verified fraud findings or confirmed audit outcomes. Evaluation scores therefore describe agreement with the generated labels, not real-world fraud-detection performance.
+These are **rule-generated labels**, not independently verified fraud findings or confirmed audit outcomes. Evaluation scores therefore describe agreement with the generated labels, not real-world fraud-detection performance.
 
 ## Project layout
 

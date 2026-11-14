@@ -4,6 +4,15 @@ import joblib
 from pathlib import Path
 
 
+RISK_FEATURES = (
+    "invoice_quantity",
+    "invoice_dollars",
+    "Freight",
+    "total_item_quantity",
+    "total_item_dollars",
+)
+
+
 # ============================================================
 # PAGE CONFIGURATION
 # ============================================================
@@ -29,6 +38,15 @@ def load_models():
     return freight_m, risk_m, risk_s
 
 freight_model, risk_model, risk_scaler = load_models()
+
+model_features = getattr(risk_model, "feature_names_in_", None)
+scaler_features = getattr(risk_scaler, "feature_names_in_", None)
+risk_model_ready = (
+    model_features is not None
+    and scaler_features is not None
+    and tuple(model_features) == RISK_FEATURES
+    and tuple(scaler_features) == RISK_FEATURES
+)
 
 
 
@@ -105,8 +123,18 @@ with st.sidebar:
 
     st.subheader("📌 System Status")
 
-    st.success("Models Loaded")
-    st.success("Application Ready")
+    st.success("Freight Model Loaded")
+    if risk_model_ready:
+        st.success("Risk Model Ready")
+    else:
+        st.error(
+            "Risk model and scaler do not match the five training features. "
+            "Run the updated training notebook and reload the app."
+        )
+    if risk_model_ready:
+        st.success("Application Ready")
+    else:
+        st.warning("Freight prediction is ready; risk prediction needs retraining.")
 
     st.divider()
 
@@ -442,16 +470,8 @@ with tab2:
             "🚚 Freight ($)", min_value=0.0, value=50.0, step=10.0, 
             key="risk_freight", help="Freight amount associated with the invoice."
         )
-        days_to_pay = st.number_input(
-            "⏱️ Days to Pay", min_value=0, value=30, step=1, 
-            key="risk_days_to_pay", help="Expected or actual days to pay."
-        )
 
     with risk_col2:
-        total_brands = st.number_input(
-            "🏷️ Total Brands", min_value=0, value=1, step=1, 
-            key="risk_total_brands", help="Total unique brands in the order."
-        )
         total_item_quantity = st.number_input(
             "📦 Total Item Quantity", min_value=0.0, value=100.0, step=1.0, 
             key="risk_total_item_quantity", help="Total quantity of all items."
@@ -466,25 +486,23 @@ with tab2:
     if st.button("Analyze Risk", type="primary", key="analyze_risk_btn"):
         if invoice_quantity <= 0 or invoice_dollars <= 0:
             st.warning("⚠️ Invoice Quantity and Invoice Dollars must be greater than 0.")
+        elif not risk_model_ready:
+            st.error(
+                "Risk prediction is unavailable because the saved model and "
+                "scaler do not match the five-feature training workflow. "
+                "Run the updated training notebook, then restart the app."
+            )
         else:
-            # Create DataFrame matching your exact 7 significant features and order
-            risk_input = pd.DataFrame([[
-                invoice_quantity, 
-                invoice_dollars, 
-                Freight, 
-                days_to_pay, 
-                total_brands, 
-                total_item_quantity, 
-                total_item_dollars
-            ]], columns=[
-                'invoice_quantity', 
-                'invoice_dollars', 
-                'Freight', 
-                'days_to_pay', 
-                'total_brands', 
-                'total_item_quantity', 
-                'total_item_dollars'
-            ])
+            risk_input = pd.DataFrame(
+                [[
+                    invoice_quantity,
+                    invoice_dollars,
+                    Freight,
+                    total_item_quantity,
+                    total_item_dollars,
+                ]],
+                columns=RISK_FEATURES,
+            )
             
             # Scale input using the trained StandardScaler
             risk_input_scaled = pd.DataFrame(
