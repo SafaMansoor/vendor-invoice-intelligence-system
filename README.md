@@ -314,7 +314,7 @@ Follow these steps to run the project locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/SafaMansoor/vendor-invoice-intelligence-system.git
 ```
 
 ### 2. Navigate to the Project Directory
@@ -386,7 +386,6 @@ Potential future enhancements include:
 
 - Advanced anomaly detection techniques
 - Additional Machine Learning algorithms
-- Model hyperparameter optimization
 - REST API integration
 - Cloud deployment
 - Automated model retraining
@@ -412,4 +411,3 @@ GitHub: [SafaMansoor](https://github.com/SafaMansoor)
 
 ---
 
-⭐ If you find this project interesting, consider giving the repository a star!
