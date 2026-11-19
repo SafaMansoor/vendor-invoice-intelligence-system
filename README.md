@@ -19,7 +19,7 @@
 
 # 📌 Project Overview
 
-The **Vendor Invoice Intelligence System** is an end-to-end Machine Learning-based application designed to assist businesses in analyzing vendor invoices, estimating freight expenses, and identifying potentially risky invoices.
+The **Vendor Invoice Intelligence System** is an end-to-end Machine Learning-based application designed to assist businesses in analyzing vendor invoices, estimating freight expenses, and identifying [...]
 
 The system focuses on two major business problems:
 
@@ -289,7 +289,16 @@ vendor-invoice-intelligence-system/
 │
 ├── data/
 │
-└── notebooks/
+├── notebooks/
+│   ├── 01_eda_invoice_risk
+│   ├── 02_data_preprocessing_invoice_risk
+│   ├── 03_model_training_invoice_risk.ipynb
+│   ├── eda_freightcost.ipynb
+│   └── model_training_freight_cost.ipynb
+│
+└── src/
+    ├── data_preprocessing_invoice_risk.py
+    └── data_preprocessing_freight_cost.py
 ```
 
 ### Directory Description
@@ -303,7 +312,15 @@ vendor-invoice-intelligence-system/
 | `freight_cost_model.pkl` | Trained freight prediction model |
 | `invoice_risk_model.pkl` | Trained invoice risk classifier |
 | `data/` | Dataset and processed data files |
-| `notebooks/` | Jupyter notebooks for EDA, preprocessing, and model development |
+| `notebooks/` | Jupyter notebooks for EDA and model training |
+| `01_eda_invoice_risk` | Invoice risk exploratory data analysis notebook |
+| `02_data_preprocessing_invoice_risk` | Invoice risk data preprocessing notebook |
+| `03_model_training_invoice_risk.ipynb` | Invoice risk model training notebook |
+| `eda_freightcost.ipynb` | Freight cost exploratory data analysis notebook |
+| `model_training_freight_cost.ipynb` | Freight cost model training notebook |
+| `src/` | Source code for data preprocessing |
+| `data_preprocessing_invoice_risk.py` | Invoice risk data preprocessing module |
+| `data_preprocessing_freight_cost.py` | Freight cost data preprocessing module |
 
 ---
 
@@ -398,7 +415,7 @@ Potential future enhancements include:
 
 The **Vendor Invoice Intelligence System** demonstrates how Machine Learning can be applied to invoice-related financial and operational workflows.
 
-By combining freight cost prediction and invoice risk detection, the system provides an interactive decision-support solution that helps businesses estimate freight expenses and identify invoices that may require additional attention.
+By combining freight cost prediction and invoice risk detection, the system provides an interactive decision-support solution that helps businesses estimate freight expenses and identify invoices that[...]
 
 The project brings together data analysis, preprocessing, predictive modeling, and application deployment into a single end-to-end Machine Learning system.
 
@@ -410,4 +427,3 @@ The project brings together data analysis, preprocessing, predictive modeling, a
 GitHub: [SafaMansoor](https://github.com/SafaMansoor)
 
 ---
-
