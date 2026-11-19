@@ -504,30 +504,83 @@ with tab2:
                 columns=RISK_FEATURES,
             )
             
+            # # Scale input using the trained StandardScaler
+            # risk_input_scaled = pd.DataFrame(
+            #     risk_scaler.transform(risk_input),
+            #     columns=risk_input.columns
+            # )
+
             # Scale input using the trained StandardScaler
             risk_input_scaled = pd.DataFrame(
                 risk_scaler.transform(risk_input),
                 columns=risk_input.columns
             )
-            
-            # Explicit decision threshold assignment with probability score
-            risk_probability = float(risk_model.predict_proba(risk_input_scaled)[0][1])
-            DECISION_THRESHOLD = 0.50
-            risk_prediction = 1 if risk_probability >= DECISION_THRESHOLD else 0
-            
+
+            # Predict invoice risk directly using the trained model
+            risk_prediction = int(
+                risk_model.predict(risk_input_scaled)[0]
+            )
+
+            # Get prediction probabilities
+            probabilities = risk_model.predict_proba(risk_input_scaled)[0]
+
+            # Get probability of the predicted class
+            predicted_class_index = list(risk_model.classes_).index(
+                risk_prediction
+            )
+            risk_probability = float(probabilities[predicted_class_index])
+            # # Debug model predictions
+            # st.write("### 🔍 Model Debug Information")
+
+            # st.write("Model Classes:", risk_model.classes_)
+            # st.write(
+            #   "Low Risk Probability:",
+            #    f"{probabilities[list(risk_model.classes_).index(0)] * 100:.2f}%"
+            # )
+
+
+
+            # st.write(
+            #     "High Risk Probability:",
+            #      f"{probabilities[list(risk_model.classes_).index(1)] * 100:.2f}%"
+            # )
+
+            # st.write("Predicted Class:", risk_prediction)
+ 
             # Display results
             st.subheader("📊 Analysis Result")
+
             res_col1, res_col2 = st.columns(2)
+
             with res_col1:
-                st.metric("Risk Probability", f"{risk_probability * 100:.1f}%")
+                st.metric(
+                    "Risk Confidence",
+                    f"{risk_probability * 100:.1f}%"
+                )
+
             with res_col2:
-                st.metric("Decision Threshold", f"{DECISION_THRESHOLD * 100:.0f}%")
-            st.progress(min(1.0, max(0.0, risk_probability)))
-            
+                st.metric(
+                    "Risk Status",
+                    "High Risk" if risk_prediction == 1 else "Low Risk"
+                )
+
+            st.progress(
+                min(1.0, max(0.0, risk_probability))
+            )
+
+            # Display final risk assessment
             if risk_prediction == 1:
-                st.error("⚠️ **High Risk Flagged:** This invoice requires manual review!")
+                st.error(
+                    "⚠️ **High Risk Flagged:** "
+                    "This invoice requires manual review!"
+                )
             else:
-                st.success("✅ **Low Risk:** Invoice looks standard.")
+                st.success(
+                    "✅ **Low Risk:** Invoice looks standard."
+                )
+
+            
+
 # ============================================================
 # FOOTER
 # ============================================================
